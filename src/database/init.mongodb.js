@@ -25,8 +25,8 @@ class Database {
         mongoose.connect(connectionMongoUrl)
             .then(_ => {
                 console.log(`Connected Mongodb success::${connectionMongoUrl}`)
-                countConnect()
-                checkOverload()
+                // countConnect()
+                // checkOverload()
             })
             .catch(err => console.log(`Error connection to MongoDB::${connectionMongoUrl}`))
     }

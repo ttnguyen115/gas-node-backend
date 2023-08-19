@@ -5,6 +5,8 @@ const helmet = require("helmet");
 const compression = require("compression");
 const app = express()
 
+app.use(express.json());
+
 // init middlewares ----------------------------------------------------------------------------------------------------
 // DEV env
 app.use(morgan("dev"))
@@ -16,14 +18,10 @@ app.use(helmet())
 app.use(compression())
 
 // init db -------------------------------------------------------------------------------------------------------------
-require("./dbs/init.mongodb")
+require("./database/init.mongodb")
 
 // init routes ---------------------------------------------------------------------------------------------------------
-app.get("/", (req, res, next) => {
-    return res.status(200).json({
-        message: "Welcome to my world!"
-    })
-})
+app.use("/", require("./routes"))
 
 // handling error
 
