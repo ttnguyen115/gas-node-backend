@@ -15,6 +15,8 @@ const RoleShop = {
   ADMIN: "0000",
 };
 
+const ENCODE_SIZE = 64;
+
 class AccessService {
   static signUp = async ({ name, email, password }) => {
     try {
@@ -37,37 +39,28 @@ class AccessService {
       });
       if (!newShop) return { code: 200, metadata: null };
 
-      // Create rsa key-pair for each shop instance
-      const cryptoKeyPairOpts = {
-        modulusLength: 4096,
-        publicKeyEncoding: {
-          type: "pkcs1",
-          format: "pem",
-        },
-        privateKeyEncoding: {
-          type: "pkcs1",
-          format: "pem",
-        },
-      };
-      const { publicKey, privateKey } = (await crypto).generateKeyPairSync(
-        "rsa",
-        cryptoKeyPairOpts,
-      );
+      // Create random strings for shop tokens
+      const publicKey = (await crypto).randomBytes(ENCODE_SIZE).toString("hex");
+      const privateKey = (await crypto)
+        .randomBytes(ENCODE_SIZE)
+        .toString("hex");
+
       // Create publicKeyString for new shop based on publicKey from rsa
-      const publicKeyString = await KeyTokenService.createKeyToken({
+      const keyStore = await KeyTokenService.createKeyToken({
         userId: newShop._id,
         publicKey,
+        privateKey,
       });
-      if (!publicKeyString) {
+      if (!keyStore) {
         return {
           code: 500,
-          message: "Generating public key string error!",
+          message: "Generating keyStore error!",
         };
       }
-      // Create public and secret keys for authentication based on publicKeyString
-      const publicKeyObj = (await crypto).createPublicKey(publicKeyString);
+
+      // Create token pairs
       const payload = { userId: newShop._id, email };
-      const tokens = await createTokenPair(payload, publicKeyObj, privateKey);
+      const tokens = await createTokenPair(payload, publicKey, privateKey);
 
       return {
         code: 201,
