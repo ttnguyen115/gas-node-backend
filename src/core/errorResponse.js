@@ -1,22 +1,6 @@
 "use strict";
 
-const ErrorStatusCode = {
-  BAD_REQUEST: 400,
-  FORBIDDEN: 403,
-  PERMISSION: 403,
-  NOT_FOUND: 404,
-  CONFLICT: 409,
-  INTERNAL_SERVER: 500,
-};
-
-const ReasonErrorStatusCode = {
-  BAD_REQUEST: "Bad request.",
-  FORBIDDEN: "Forbidden access.",
-  PERMISSION: "Permission denied.",
-  NOT_FOUND: "Not Found.",
-  CONFLICT: "Permissions denied.",
-  INTERNAL_SERVER: "Internal Server Error",
-};
+const { ReasonPhrases, StatusCodes } = require("../utils/httpStatusCode");
 
 class ErrorResponse extends Error {
   constructor(message, status) {
@@ -30,8 +14,8 @@ class ErrorResponse extends Error {
  */
 class BadRequestRequestError extends ErrorResponse {
   constructor(
-    message = ReasonErrorStatusCode.BAD_REQUEST,
-    status = ErrorStatusCode.BAD_REQUEST,
+    message = ReasonPhrases.BAD_REQUEST,
+    status = StatusCodes.BAD_REQUEST,
   ) {
     super(message, status);
   }
@@ -39,8 +23,8 @@ class BadRequestRequestError extends ErrorResponse {
 
 class ForbiddenRequestError extends ErrorResponse {
   constructor(
-    message = ReasonErrorStatusCode.FORBIDDEN,
-    status = ErrorStatusCode.FORBIDDEN,
+    message = ReasonPhrases.FORBIDDEN,
+    status = StatusCodes.FORBIDDEN,
   ) {
     super(message, status);
   }
@@ -48,8 +32,8 @@ class ForbiddenRequestError extends ErrorResponse {
 
 class PermissionRequestError extends ErrorResponse {
   constructor(
-    message = ReasonErrorStatusCode.PERMISSION,
-    status = ErrorStatusCode.PERMISSION,
+    message = ReasonPhrases.FORBIDDEN,
+    status = StatusCodes.FORBIDDEN,
   ) {
     super(message, status);
   }
@@ -57,34 +41,29 @@ class PermissionRequestError extends ErrorResponse {
 
 class NotFoundRequestError extends ErrorResponse {
   constructor(
-    message = ReasonErrorStatusCode.NOT_FOUND,
-    status = ErrorStatusCode.NOT_FOUND,
+    message = ReasonPhrases.NOT_FOUND,
+    status = StatusCodes.NOT_FOUND,
   ) {
     super(message, status);
   }
 }
 
 class ConflictRequestError extends ErrorResponse {
-  constructor(
-    message = ReasonErrorStatusCode.CONFLICT,
-    status = ErrorStatusCode.CONFLICT,
-  ) {
+  constructor(message = ReasonPhrases.CONFLICT, status = StatusCodes.CONFLICT) {
     super(message, status);
   }
 }
 
 class InternalServerRequestError extends ErrorResponse {
   constructor(
-    message = ReasonErrorStatusCode.INTERNAL_SERVER,
-    status = ErrorStatusCode.INTERNAL_SERVER,
+    message = ReasonPhrases.INTERNAL_SERVER_ERROR,
+    status = StatusCodes.INTERNAL_SERVER_ERROR,
   ) {
     super(message, status);
   }
 }
 
 module.exports = {
-  ErrorStatusCode,
-  ReasonErrorStatusCode,
   BadRequestRequestError,
   ForbiddenRequestError,
   PermissionRequestError,

@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("node:crypto");
 
 const KeyTokenService = require("../services/keyTokenService");
+const { findByEmail } = require("../services/shopService");
 const shopModel = require("../models/shopModel");
 const { createTokenPair } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
@@ -78,6 +79,14 @@ class AccessService {
         tokens,
       },
     };
+  };
+
+  static login = async ({ email, password, refreshToken = null }) => {
+    const foundShop = findByEmail({ email });
+    if (!foundShop)
+      throw new BadRequestRequestError("Shop has not been registered yet.");
+
+    const match = bcrypt.compare(password, foundShop.password);
   };
 }
 
