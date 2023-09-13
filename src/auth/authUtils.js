@@ -1,12 +1,13 @@
 "use strict";
 
 const JWT = require("jsonwebtoken");
+const crypto = require("node:crypto");
 
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
     const accessToken = await JWT.sign(
       payload,
-      privateKey,
+      publicKey,
       generateJwtSignOpts("2 days"),
     );
     const refreshToken = await JWT.sign(
@@ -28,12 +29,17 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 };
 
 const generateJwtSignOpts = (days) => {
+  return { expiresIn: days };
+};
+
+const generateTokenPairs = async () => {
   return {
-    algorithm: "RS256",
-    expiresIn: days,
+    privateKey: (await crypto).randomBytes(64).toString("hex"),
+    publicKey: (await crypto).randomBytes(64).toString("hex"),
   };
 };
 
 module.exports = {
   createTokenPair,
+  generateTokenPairs,
 };

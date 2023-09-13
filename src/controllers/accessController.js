@@ -14,6 +14,17 @@ class AccessController {
       },
     }).send(res);
   };
+
+  login = async (req, res, next) => {
+    const accessServiceResponse = await AccessService.login(req.body);
+    new Ok({
+      message: "Login successfully!",
+      metadata: accessServiceResponse,
+      options: {
+        server_health: "Ok",
+      },
+    }).send(res);
+  };
 }
 
 module.exports = new AccessController();
