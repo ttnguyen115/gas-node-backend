@@ -2,6 +2,13 @@
 
 const JWT = require("jsonwebtoken");
 const crypto = require("node:crypto");
+const { asyncHandler } = require("../helpers/asyncHandler");
+const { findByUserId } = require("../services/keyTokenService");
+const { HEADER } = require("./HeaderConstant");
+const {
+  UnauthorizedRequestError,
+  NotFoundRequestError,
+} = require("../core/errorResponse");
 
 const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
@@ -39,7 +46,33 @@ const generateTokenPairs = async () => {
   };
 };
 
+/*
+ * This function is used for validating request.
+ */
+const authentication = asyncHandler(async (req, res, next) => {
+  const userId = req.headers[HEADER.CLIENT_ID]?.toString();
+  if (!userId) throw new UnauthorizedRequestError("User ID is missing.");
+
+  const keyStore = await findByUserId(userId);
+  if (!keyStore) throw new NotFoundRequestError("KeyStore not found.");
+
+  const accessToken = req.headers[HEADER.AUTHORIZATION]?.toString();
+  if (!accessToken)
+    throw new UnauthorizedRequestError("Access token is missing.");
+  
+  try {
+    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
+    if (userId !== decodeUser.userId)
+      throw new UnauthorizedRequestError("User ID is invalid");
+    req.keyStore = keyStore;
+    return next();
+  } catch (error) {
+    throw error;
+  }
+});
+
 module.exports = {
   createTokenPair,
   generateTokenPairs,
+  authentication,
 };

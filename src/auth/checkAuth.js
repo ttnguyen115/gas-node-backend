@@ -2,11 +2,7 @@
 
 const { findById } = require("../services/apiKeyService");
 const { StatusCodes, ReasonPhrases } = require("../utils/httpStatusCode");
-
-const HEADER = {
-  API_KEY: "x-api-key",
-  AUTHORIZATION: "authorization",
-};
+const { HEADER } = require("./HeaderConstant");
 
 async function apiKey(req, res, next) {
   const key = req.headers[HEADER.API_KEY]?.toString();
@@ -41,14 +37,7 @@ function permission(permissionCode) {
   };
 }
 
-function asyncHandler(callback) {
-  return (req, res, next) => {
-    callback(req, res, next).catch(next);
-  };
-}
-
 module.exports = {
   apiKey,
   permission,
-  asyncHandler,
 };

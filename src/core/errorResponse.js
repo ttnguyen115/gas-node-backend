@@ -73,6 +73,7 @@ class UnauthorizedRequestError extends ErrorResponse {
 }
 
 module.exports = {
+  ErrorResponse,
   BadRequestRequestError,
   ForbiddenRequestError,
   PermissionRequestError,
