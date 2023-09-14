@@ -33,6 +33,16 @@ class AccessController {
       metadata: accessServiceResponse,
     }).send(res);
   };
+
+  refreshToken = async (req, res, next) => {
+    const accessServiceResponse = await AccessService.refreshToken(
+      req.body.refreshToken,
+    );
+    new Ok({
+      message: "Welcome back!",
+      metadata: accessServiceResponse,
+    }).send(res);
+  };
 }
 
 module.exports = new AccessController();

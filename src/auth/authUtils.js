@@ -59,7 +59,7 @@ const authentication = asyncHandler(async (req, res, next) => {
   const accessToken = req.headers[HEADER.AUTHORIZATION]?.toString();
   if (!accessToken)
     throw new UnauthorizedRequestError("Access token is missing.");
-  
+
   try {
     const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
     if (userId !== decodeUser.userId)
@@ -71,8 +71,13 @@ const authentication = asyncHandler(async (req, res, next) => {
   }
 });
 
+const verifyJwt = async (token, keySecret) => {
+  return JWT.verify(token, keySecret);
+};
+
 module.exports = {
   createTokenPair,
   generateTokenPairs,
   authentication,
+  verifyJwt,
 };
