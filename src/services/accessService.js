@@ -104,25 +104,17 @@ class AccessService {
     return await KeyTokenService.removeKeyById(keyStore._id);
   };
 
-  static refreshToken = async (refreshToken) => {
+  static refreshToken = async ({ refreshToken, user, keyStore }) => {
+    const { userId, email } = user;
     // Check if this refresh token is in used token list, then delete token and re-login
-    const foundToken =
-      await KeyTokenService.findByRefreshTokenUsed(refreshToken);
-    if (foundToken) {
-      const { userId } = await verifyJwt(refreshToken, foundToken.privateKey);
+    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
       await KeyTokenService.deleteKeyById(userId);
       throw new ForbiddenRequestError("Token is invalid. Please re-login!!");
     }
-
     // Check if token exist in database
-    const holderToken = await KeyTokenService.findByRefreshToken(refreshToken);
-    if (!holderToken)
+    if (keyStore.refreshToken !== refreshToken)
       throw new UnauthorizedRequestError("Shop has not been registered yet.");
-    // Check if token is connected with any shop
-    const { userId, email } = await verifyJwt(
-      refreshToken,
-      holderToken.privateKey,
-    );
+
     const foundShop = await findByEmail({ email });
     if (!foundShop)
       throw new UnauthorizedRequestError("Shop has not been registered yet.");
@@ -130,10 +122,10 @@ class AccessService {
     // Accept to access and return new token pair
     const newPairToken = await createTokenPair(
       { userId, email },
-      holderToken.publicKey,
-      holderToken.privateKey,
+      keyStore.publicKey,
+      keyStore.privateKey,
     );
-    await holderToken.updateOne({
+    await keyStore.updateOne({
       $set: {
         refreshToken: newPairToken.refreshToken,
       },
@@ -143,7 +135,7 @@ class AccessService {
     });
 
     return {
-      user: { userId, email },
+      user,
       tokens: newPairToken,
     };
   };
