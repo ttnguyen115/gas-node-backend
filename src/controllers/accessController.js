@@ -35,9 +35,12 @@ class AccessController {
   };
 
   refreshToken = async (req, res, next) => {
-    const accessServiceResponse = await AccessService.refreshToken(
-      req.body.refreshToken,
-    );
+    const { refreshToken, user, keyStore } = req;
+    const accessServiceResponse = await AccessService.refreshToken({
+      refreshToken,
+      user,
+      keyStore,
+    });
     new Ok({
       message: "Welcome back!",
       metadata: accessServiceResponse,

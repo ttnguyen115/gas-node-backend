@@ -71,6 +71,43 @@ const authentication = asyncHandler(async (req, res, next) => {
   }
 });
 
+const authenticationV2 = asyncHandler(async (req, res, next) => {
+  const userId = req.headers[HEADER.CLIENT_ID]?.toString();
+  if (!userId) throw new UnauthorizedRequestError("User ID is missing.");
+
+  const keyStore = await findByUserId(userId);
+  if (!keyStore) throw new NotFoundRequestError("KeyStore not found.");
+
+  if (req.headers[HEADER.REFRESHTOKEN]) {
+    const refreshToken = req.headers[HEADER.REFRESHTOKEN];
+    try {
+      const decodeUser = JWT.verify(refreshToken, keyStore.privateKey);
+      if (userId !== decodeUser.userId)
+        throw new UnauthorizedRequestError("User ID is invalid");
+      req.keyStore = keyStore;
+      req.user = decodeUser;
+      req.refreshToken = refreshToken;
+      return next();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  const accessToken = req.headers[HEADER.AUTHORIZATION]?.toString();
+  if (!accessToken)
+    throw new UnauthorizedRequestError("Access token is missing.");
+
+  try {
+    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
+    if (userId !== decodeUser.userId)
+      throw new UnauthorizedRequestError("User ID is invalid");
+    req.keyStore = keyStore;
+    return next();
+  } catch (error) {
+    throw error;
+  }
+});
+
 const verifyJwt = async (token, keySecret) => {
   return JWT.verify(token, keySecret);
 };
@@ -79,5 +116,6 @@ module.exports = {
   createTokenPair,
   generateTokenPairs,
   authentication,
+  authenticationV2,
   verifyJwt,
 };
