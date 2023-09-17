@@ -3,6 +3,12 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("../../controllers/productController");
-const { asyncHandler } = require("../../auth/authUtils");
+const { authenticationV2 } = require("../../auth/authUtils");
+const { asyncHandler } = require("../../helpers/asyncHandler");
+
+// Authentication middleware
+router.use(authenticationV2);
+//==========================
+router.post("", asyncHandler(productController.createProduct));
 
 module.exports = router;
