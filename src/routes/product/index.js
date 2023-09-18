@@ -9,6 +9,8 @@ const { asyncHandler } = require("../../helpers/asyncHandler");
 // Authentication middleware
 router.use(authenticationV2);
 //==========================
+router.get("/drafts/all", asyncHandler(productController.getAllDraftsForShop));
+
 router.post("", asyncHandler(productController.createProduct));
 
 module.exports = router;
