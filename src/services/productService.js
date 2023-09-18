@@ -16,6 +16,25 @@ class ProductFactory {
     ProductFactory.productRegistry[type] = classRef;
   }
 
+  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true };
+    return await ProductRepository.findAllDraftsForShop({ query, limit, skip });
+  }
+
+  static async findAllPublishForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isPublished: true };
+    return await ProductRepository.findAllPublishForShop({
+      query,
+      limit,
+      skip,
+    });
+  }
+
+  static async searchProduct({ keySearch = "" }) {
+    console.log(keySearch);
+    return await ProductRepository.searchProductByUser(keySearch);
+  }
+
   static async createProduct(type, payload) {
     const productClass = ProductFactory.productRegistry[type];
     if (!productClass)
@@ -23,9 +42,18 @@ class ProductFactory {
     return new productClass(payload).createProduct();
   }
 
-  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
-    const query = { product_shop, isDraft: true };
-    return await ProductRepository.findAllDraftsForShop({ query, limit, skip });
+  static async publishProductByShop({ product_shop, product_id }) {
+    return await ProductRepository.publishProductByShop({
+      product_shop,
+      product_id,
+    });
+  }
+
+  static async unPublishProductByShop({ product_shop, product_id }) {
+    return await ProductRepository.unPublishProductByShop({
+      product_shop,
+      product_id,
+    });
   }
 }
 
