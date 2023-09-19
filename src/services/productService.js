@@ -30,9 +30,30 @@ class ProductFactory {
     });
   }
 
-  static async searchProduct({ keySearch = "" }) {
-    console.log(keySearch);
-    return await ProductRepository.searchProductByUser(keySearch);
+  static async searchProducts({ keySearch }) {
+    return await ProductRepository.searchProductByUser({ keySearch });
+  }
+
+  static async findAllProducts({
+    limit = 50,
+    sort = "ctime",
+    page = 1,
+    filter = { isPublished: true },
+  }) {
+    return await ProductRepository.findAllProducts({
+      limit,
+      sort,
+      page,
+      filter,
+      select: ["product_name", "product_price", "product_thumb"],
+    });
+  }
+
+  static async findProduct({ product_id }) {
+    return await ProductRepository.findProduct({
+      product_id,
+      unSelect: ["__v"],
+    });
   }
 
   static async createProduct(type, payload) {

@@ -88,7 +88,7 @@ class ProductController {
   };
 
   /**
-   * @desc Get all published products for shop
+   * @desc Get all published products for user
    * @param req
    * @param res
    * @param next
@@ -97,8 +97,36 @@ class ProductController {
   getSearchProductsForUser = async (req, res, next) => {
     new Ok({
       message: "Get search products successfully!",
-      metadata: await ProductService.searchProduct({
-        keySearch: req.params,
+      metadata: await ProductService.searchProducts(req.params),
+    }).send(res);
+  };
+
+  /**
+   * @desc Get all products
+   * @param req
+   * @param res
+   * @param next
+   * @returns {Promise<void>}
+   */
+  findAllProducts = async (req, res, next) => {
+    new Ok({
+      message: "Get all products successfully!",
+      metadata: await ProductService.findAllProducts(req.query),
+    }).send(res);
+  };
+
+  /**
+   * @desc Get product detail
+   * @param req
+   * @param res
+   * @param next
+   * @returns {Promise<void>}
+   */
+  findProduct = async (req, res, next) => {
+    new Ok({
+      message: "Get product detail successfully!",
+      metadata: await ProductService.findProduct({
+        product_id: req.params.product_id,
       }),
     }).send(res);
   };
