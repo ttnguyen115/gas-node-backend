@@ -75,6 +75,17 @@ class ProductRepository {
       .lean();
   }
 
+  static async updateProductById({
+    product_id,
+    bodyUpdate,
+    productType,
+    isNew = true,
+  }) {
+    return await productType.findByIdAndUpdate(product_id, bodyUpdate, {
+      new: isNew,
+    });
+  }
+
   // Commons
   static async queryOneProduct({ product_shop, product_id }) {
     const foundShop = await product.findOne({

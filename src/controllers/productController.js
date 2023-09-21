@@ -22,6 +22,27 @@ class ProductController {
   };
 
   /**
+   * @desc Patch to update product by id
+   * @param req
+   * @param res
+   * @param next
+   * @returns {Promise<void>}
+   */
+  updateProduct = async (req, res, next) => {
+    new Created({
+      message: "Update product detail successfully!",
+      metadata: await ProductService.updateProduct(
+        req.body.product_type,
+        req.params.product_id,
+        {
+          ...req.body,
+          product_shop: req.user.userId,
+        },
+      ),
+    }).send(res);
+  };
+
+  /**
    * @desc Change publish product status by shop
    * @param req
    * @param res
