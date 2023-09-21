@@ -1,11 +1,6 @@
 "use strict";
 
-const {
-  electronic,
-  clothing,
-  furniture,
-  product,
-} = require("../models/productModel");
+const { product } = require("../models/productModel");
 const { Types } = require("mongoose");
 const { getSelectData, getUnselectData } = require("../utils");
 

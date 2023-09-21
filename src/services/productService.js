@@ -8,6 +8,7 @@ const {
 } = require("../models/productModel");
 const { BadRequestRequestError } = require("../core/errorResponse");
 const ProductRepository = require("../repositories/productRepository");
+const InventoryRepository = require("../repositories/inventoryRepository");
 const { removeNullObject, updateNestedObjectParser } = require("../utils");
 
 class ProductFactory {
@@ -108,7 +109,15 @@ class Product {
   }
 
   async createProduct(product_id) {
-    return await product.create({ ...this, _id: product_id });
+    const newProduct = await product.create({ ...this, _id: product_id });
+    if (newProduct) {
+      await InventoryRepository.insertInventory({
+        productId: newProduct._id,
+        shopId: this.product_shop,
+        stock: this.product_quantity,
+      });
+    }
+    return newProduct;
   }
 
   async updateProduct(product_id, bodyUpdate) {
