@@ -7,6 +7,7 @@ const {
 const discountModel = require("../models/discountModel");
 const { convertToObjectIdMongodb } = require("../utils");
 const ProductRepository = require("../repositories/productRepository");
+const DiscountRepository = require("../repositories/discountRepository");
 
 class DiscountService {
   static async createDiscountCode(payload) {
@@ -114,7 +115,18 @@ class DiscountService {
     return products;
   }
 
-  static async getAllDiscountCopdesByShop(payload) {}
+  static async getAllDiscountCodesByShop({ limit, page, shopId }) {
+    return await DiscountRepository.findAllDiscountCodesUnselect({
+      limit: +limit,
+      page: +page,
+      filter: {
+        discount_shopId: convertToObjectIdMongodb(shopId),
+        discount_is_active: true,
+      },
+      unSelect: ["__v", "discount_shopId"],
+      model: discountModel,
+    });
+  }
 }
 
 module.exports = DiscountService;
