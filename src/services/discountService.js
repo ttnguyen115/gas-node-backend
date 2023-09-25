@@ -1,9 +1,7 @@
 "use strict";
 
-const {
-  BadRequestRequestError,
-  NotFoundRequestError,
-} = require("../core/errorResponse");
+const { BadRequestRequestError, NotFoundRequestError } =
+  require("../core/errorResponse").default;
 const discountModel = require("../models/discountModel");
 const { convertToObjectIdMongodb } = require("../utils");
 const ProductRepository = require("../repositories/productRepository");

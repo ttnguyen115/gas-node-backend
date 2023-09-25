@@ -101,7 +101,7 @@ class ProductController {
    */
   getAllPublishForShop = async (req, res, next) => {
     new Ok({
-      message: "Get all drafts for shop successfully!",
+      message: "Get all published products for shop successfully!",
       metadata: await ProductService.findAllPublishForShop({
         product_shop: req.user.userId,
       }),
